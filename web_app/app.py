@@ -7,11 +7,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class User(db.Model):
-
-    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-
 
 @app.route('/')
 def index():
@@ -31,6 +29,9 @@ def create_user():
 
 # Create database tables within the application context
 with app.app_context():
+    # Drop the table if it exists
+    db.drop_all()
+    # Create the table
     db.create_all()
 
 if __name__ == '__main__':
