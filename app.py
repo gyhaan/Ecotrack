@@ -13,7 +13,7 @@ def hello_world():
     """
     Returns a greeting message.
     """
-    return 'Hello World!'
+    return 'Hello, World!'
 
 
 if __name__ == '__main__':
