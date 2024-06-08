@@ -15,8 +15,9 @@ class HelloWorldTestCase(unittest.TestCase):
         """
         Set up the test environment before each test case.
 
-        This method is called automatically before each test case is executed.
-        It initializes the Flask test client and sets the testing flag to True.
+        This method is called before each test case is executed.
+        It initializes the Flask test client and sets the testing flag
+        to True.
 
         """
         self.app = app.test_client()
@@ -26,8 +27,9 @@ class HelloWorldTestCase(unittest.TestCase):
         """
         Test case for the hello world endpoint.
 
-        This method sends a GET request to the '/hello' endpoint and asserts that the response
-        status code is 200 and the response data is 'Hello, World!'.
+        This method sends a GET request to the '/hello' endpointand asserts
+        that the responsestatus code is 200 and the response data is
+        'Hello, World!'.
 
         """
         response = self.app.get('/hello')
@@ -38,7 +40,8 @@ class HelloWorldTestCase(unittest.TestCase):
         """
         Clean up the test environment after each test case.
 
-        This method is called automatically after each test case is executed.
+        This method is called automatically after each test case is
+        executed.
 
         """
         del self.app
