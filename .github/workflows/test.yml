@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   lint:
 
-    name: Run Flake8
+    name: Lint codebase
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
