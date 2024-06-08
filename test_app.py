@@ -5,7 +5,6 @@ Module for testing the app.py
 import unittest
 from app import app
 
-
 class HelloWorldTestCase(unittest.TestCase):
     """
     Test case for the HelloWorld endpoint in the Flask app.
