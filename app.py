@@ -52,4 +52,44 @@ def delete_household(household_id):
         return {"error": "Household not found"}, 404
 
 
+@app.get("/collectors")
+def get_collectors():
+    """
+    Get all collectors in the database
+    """
+    return {"collectors": list(collectors.values())}
 
+
+@app.post("/collectors")
+def create_new_collector():
+    """
+    Add a new collector to the database
+    """
+    collector_data = request.get_json()
+    collector_id = uuid.uuid4().hex
+    new_collector = {**collector_data, "id": collector_id}
+    collectors[collector_id] = new_collector
+    return new_collector, 201
+
+
+@app.get("/collectors/<collector_id>")
+def get_collector(collector_id):
+    """
+    Get a collector by ID
+    """
+    try:
+        return collectors[collector_id], 200
+    except KeyError:
+        return {"error": "Collector not found"}, 404
+
+
+@app.delete("/collectors/<collector_id>")
+def delete_collector(collector_id):
+    """
+    Delete a collector by ID
+    """
+    try:
+        del collectors[collector_id]
+        return {"message": "Collector deleted"}, 200
+    except KeyError:
+        return {"error": "Collector not found"}, 404
