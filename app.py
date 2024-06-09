@@ -5,7 +5,8 @@ import uuid
 
 from flask import Flask, request
 from flask_smorest import abort
-from db import households, collectors, collection_dates, collection_requests, admins
+from db import households, \
+    collectors, collection_dates, collection_requests, admins
 
 
 app = Flask(__name__)
