@@ -9,7 +9,11 @@ from flask_smorest import Blueprint, abort
 from db import collectors
 
 
-blp = Blueprint("collectors", __name__, description="Operations on collectors")
+blp = Blueprint(
+    "collectors",
+    __name__,
+    description="Operations on collectors"
+    )
 
 
 @blp.route("/collectors")
