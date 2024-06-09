@@ -2,9 +2,12 @@
 Blueprint for handling requests to the /collectors endpoint
 """
 
-import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import SQLAlchemyError
+
+from db import db
+from models.collector import CollectorModel
 from schemas import CollectorSchema
 
 
@@ -12,7 +15,7 @@ blp = Blueprint(
     "collectors",
     __name__,
     description="Operations on collectors"
-    )
+)
 
 
 @blp.route("/collectors")
@@ -28,22 +31,34 @@ class Collectors(MethodView):
         Returns:
             dict: A dictionary containing all collectors in the database
         """
-        return collectors.values()
+        return CollectorModel.query.all()
 
     @blp.arguments(CollectorSchema)
     @blp.response(201, CollectorSchema)
     def post(self, collector_data):
         """
-        Add a new collector to the database
+        Add a new collector to the database.
+
+        Args:
+            collector_data (dict): A dictionary containing the data for the new collector.
 
         Returns:
-            tuple: A tuple containing the newly added collector and the
-            HTTP status code 201
+            tuple: A tuple containing the newly added collector and the HTTP status code 201.
+
+        Raises:
+            abort: If there is an error adding the collector to the database.
+
         """
-        collector_id = uuid.uuid4().hex
-        new_collector = {**collector_data, "id": collector_id}
-        collectors[collector_id] = new_collector
-        return new_collector
+        collector = CollectorModel(**collector_data)
+
+        try:
+            db.session.add(collector)
+            db.session.commit()
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            abort(400, message=str(error))
+
+        return collector
 
 
 @blp.route("/collectors/<collector_id>")
@@ -66,10 +81,7 @@ class Collector(MethodView):
         Raises:
             404: If the collector with the given ID is not found
         """
-        try:
-            return collectors[collector_id]
-        except KeyError:
-            abort(404, message="Collector not found.")
+        return CollectorModel.query.get_or_404(collector_id)
 
     def delete(self, collector_id):
         """
@@ -85,8 +97,7 @@ class Collector(MethodView):
         Raises:
             404: If the collector with the given ID is not found
         """
-        try:
-            del collectors[collector_id]
-            return {"message": "Collector deleted"}, 200
-        except KeyError:
-            abort(404, message="Collector not found.")
+        collector = CollectorModel.query.get_or_404(collector_id)
+        db.session.delete(collector)
+        db.session.commit()
+        return {"message": "Collector deleted"}
