@@ -9,6 +9,7 @@ from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 
 from db import db
+from resources.user import blp as UserBlp
 from resources.household import blp as HouseholdBlp
 from resources.collector import blp as CollectorBlp
 from resources.collection_dates import blp as CollectionDatesBlp
@@ -40,6 +41,7 @@ def create_app(db_url=None):
         db.create_all()
 
     # Register the blueprints
+    api.register_blueprint(UserBlp)
     api.register_blueprint(HouseholdBlp)
     api.register_blueprint(CollectorBlp)
     api.register_blueprint(CollectionDatesBlp)

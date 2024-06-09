@@ -5,6 +5,7 @@ This module contains the User blueprint.
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
+from flask_jwt_extended import create_access_token
 
 from db import db
 from models import UserModel
@@ -46,6 +47,33 @@ class UserRegister(MethodView):
         db.session.commit()
 
         return {"message": "User created successfully"}, 201
+
+
+@blp.route("/login")
+class UserLogin(MethodView):
+    @blp.arguments(UserSchema)
+    def post(self, user_data):
+        """
+        Log in a user
+
+        Parameters:
+        - user_data (dict): The data of the user to be logged in. It should contain the following keys:
+            - username (str): The username of the user.
+            - password (str): The password of the user.
+
+        Returns:
+        - dict: A dictionary containing the message "Logged in successfully" and the access token.
+
+        Raises:
+        - 401 Unauthorized: If the username or password is incorrect.
+        """
+        user = UserModel.query.filter_by(username=user_data["username"]).first()
+        if user is None or not pbkdf2_sha256.verify(user_data["password"], user.password):
+            abort(401, message="Incorrect username or password")
+
+        access_token = create_access_token(identity=user.id)
+
+        return {"message": "Logged in successfully", "access_token": access_token}
 
 
 @blp.route("/users/<int:user_id>")
