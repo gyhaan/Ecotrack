@@ -17,6 +17,7 @@ def get_all_households():
     return {"households": list(households.values())}
 
 
+# -------------------  HOUSEHOLDS -------------------
 @app.post("/households")
 def create_new_household():
     """
@@ -60,6 +61,7 @@ def get_all_collectors():
     return {"collectors": list(collectors.values())}
 
 
+# -------------------  COLLECTORS -------------------
 @app.post("/collectors")
 def create_new_collector():
     """
@@ -95,6 +97,7 @@ def delete_collector(collector_id):
         return {"error": "Collector not found"}, 404
 
 
+# -------------------  COLLECTION DATES -------------------
 @app.get("/collection_dates")
 def get_all_collection_dates():
     """
@@ -112,6 +115,35 @@ def create_new_collection_date():
     if collection_date_data["collector_id"] not in collectors:
         return {"error": "Collector not found"}, 404
     collection_date_id = uuid.uuid4().hex
-    new_collection_date = {**collection_date_data, "id": collection_date_id}
+    new_collection_date = {
+        **collection_date_data,
+        "id": collection_date_id
+        }
     collection_dates[collection_date_id] = new_collection_date
+    return new_collection_date, 201
+
+
+# 
+@app.get("/collection_requests")
+def get_all_collection_requests():
+    """
+    Get all collection requests in the database
+    """
+    return {"collection_requests": list(collection_requests.values())}
+
+
+@app.post("/collection_requests")
+def create_new_collection_request():
+    """
+    Create a new collection request
+    """
+    collection_request_data = request.get_json()
+    if collection_request_data["household_id"] not in households:
+        return {"error": "Household not found"}, 404
+    collection_request_id = uuid.uuid4().hex
+    new_collection_date = {
+        **collection_request_data,
+        "id": collection_request_id
+        }
+    collection_requests[collection_request_id] = new_collection_date
     return new_collection_date, 201
