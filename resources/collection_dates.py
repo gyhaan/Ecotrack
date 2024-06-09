@@ -31,9 +31,10 @@ class CollectionDates(MethodView):
             dict: A dictionary containing all collection dates
             in the database
         """
-        return {"collection_dates": list(collection_dates.values())}
+        return collection_dates.values()
 
     @blp.arguments(CollectionDateSchema)
+    @blp.response(201, CollectionDateSchema)
     def post(self):
         """
         Add a new collection date to the database
@@ -49,7 +50,7 @@ class CollectionDates(MethodView):
             "id": collection_date_id
             }
         collection_dates[collection_date_id] = new_collection_date
-        return new_collection_date, 201
+        return new_collection_date
 
 
 @blp.route("/collection_dates/<collection_date_id>")
@@ -72,7 +73,7 @@ class CollectionDate(MethodView):
             HTTP status code 200
         """
         try:
-            return collection_dates[collection_date_id], 200
+            return collection_dates[collection_date_id]
         except KeyError:
             abort(404, message="Collection date not found.")
 

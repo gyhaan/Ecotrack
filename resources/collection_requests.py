@@ -31,9 +31,10 @@ class CollectionRequests(MethodView):
             dict: A dictionary containing all collection requests in
             the database
         """
-        return {"collection_requests": list(collection_requests.values())}
+        return collection_requests.values()
 
     @blp.arguments(CollectionRequestSchema)
+    @blp.response(201, CollectionRequestSchema)
     def post(self):
         """
         Add a new collection request to the database
@@ -50,7 +51,7 @@ class CollectionRequests(MethodView):
             "id": collection_request_id
             }
         collection_requests[collection_request_id] = new_collection_request
-        return new_collection_request, 201
+        return new_collection_request
 
 
 @blp.route("/collection_requests/<collection_request_id>")
@@ -73,7 +74,7 @@ class CollectionRequest(MethodView):
             HTTP status code 200
         """
         try:
-            return collection_requests[collection_request_id], 200
+            return collection_requests[collection_request_id]
         except KeyError:
             abort(404, message="Collection request not found.")
 

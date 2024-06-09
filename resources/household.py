@@ -29,9 +29,10 @@ class Households(MethodView):
         Returns:
             dict: A dictionary containing all households in the database
         """
-        return {"households": list(households.values())}
+        return households.values()
 
     @blp.arguments(HouseholdSchema)
+    @blp.response(201, HouseholdSchema)
     def post(self, household_data):
         """
         Add a new household to the database
@@ -43,7 +44,7 @@ class Households(MethodView):
         household_id = uuid.uuid4().hex
         new_household = {**household_data, "id": household_id}
         households[household_id] = new_household
-        return new_household, 201
+        return new_household
 
 
 @blp.route("/households/<household_id>")
@@ -67,7 +68,7 @@ class Household(MethodView):
             404: If the household with the given ID is not found
         """
         try:
-            return households[household_id], 200
+            return households[household_id]
         except KeyError:
             abort(404, message="Household not found.")
 

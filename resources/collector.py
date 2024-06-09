@@ -29,9 +29,10 @@ class Collectors(MethodView):
         Returns:
             dict: A dictionary containing all collectors in the database
         """
-        return {"collectors": list(collectors.values())}
+        return collectors.values()
 
     @blp.arguments(CollectorSchema)
+    @blp.response(201, CollectorSchema)
     def post(self, collector_data):
         """
         Add a new collector to the database
@@ -43,7 +44,7 @@ class Collectors(MethodView):
         collector_id = uuid.uuid4().hex
         new_collector = {**collector_data, "id": collector_id}
         collectors[collector_id] = new_collector
-        return new_collector, 201
+        return new_collector
 
 
 @blp.route("/collectors/<collector_id>")
@@ -67,7 +68,7 @@ class Collector(MethodView):
             404: If the collector with the given ID is not found
         """
         try:
-            return collectors[collector_id], 200
+            return collectors[collector_id]
         except KeyError:
             abort(404, message="Collector not found.")
 
