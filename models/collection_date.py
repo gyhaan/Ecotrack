@@ -24,7 +24,7 @@ class CollectionDateModel(db.Model):
         primary_key=True
         )
     collection_date = db.Column(
-        db.String(80),
+        db.Date,
         nullable=False
         )
     collector_id = db.Column(
