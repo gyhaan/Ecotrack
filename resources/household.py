@@ -5,7 +5,10 @@ Blueprint for household resources
 import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import SQLAlchemyError
 
+form db import db
+from models import HouseholdModel
 from schemas import HouseholdSchema
 
 
@@ -27,9 +30,9 @@ class Households(MethodView):
         Get all households in the database
 
         Returns:
-            dict: A dictionary containing all households in the databasev
+            dict: A dictionary containing all households in the database
         """
-        return Households.query.all()
+        return HouseholdModel.query.all()
 
     @blp.arguments(HouseholdSchema)
     @blp.response(201, HouseholdSchema)
@@ -37,14 +40,26 @@ class Households(MethodView):
         """
         Add a new household to the database
 
+        Args:
+            household_data (dict): A dictionary containing the data for the new household
+
         Returns:
-            tuple: A tuple containing the newly added household and the
-            HTTP status code 201
+            tuple: A tuple containing the newly added household and the HTTP status code 201
+
+        Raises:
+            abort: If there is an error adding the household to the database
+
         """
-        household_id = uuid.uuid4().hex
-        new_household = {**household_data, "id": household_id}
-        households[household_id] = new_household
-        return new_household
+        household = HouseholdModel(**household_data)
+
+        try:
+            db.session.add(household)
+            db.session.commit()
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            abort(400, message=str(error))
+
+        return household
 
 
 @blp.route("/households/<household_id>")
@@ -67,10 +82,7 @@ class Household(MethodView):
         Raises:
             404: If the household with the given ID is not found
         """
-        try:
-            return households[household_id]
-        except KeyError:
-            abort(404, message="Household not found.")
+        return HouseholdModel.query.get_or_404(household_id)
 
     def delete(self, household_id):
         """
@@ -86,8 +98,9 @@ class Household(MethodView):
         Raises:
             404: If the household with the given ID is not found
         """
-        try:
-            del households[household_id]
-            return {"message": "Household deleted"}, 200
-        except KeyError:
-            abort(404, message="Household not found.")
+        household = HouseholdModel.query.get_or_404(household_id)
+
+        db.session.delete(household)
+        db.session.commit()
+
+        return {"message": "Household deleted"}, 200

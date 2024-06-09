@@ -7,7 +7,7 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
-from models.collector import CollectorModel
+from models import CollectorModel
 from schemas import CollectorSchema
 
 
