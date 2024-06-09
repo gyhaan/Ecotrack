@@ -4,7 +4,7 @@ Entry point of the application
 import uuid
 
 from flask import Flask, request
-from db import households, collectors, collection_dates, collection_requests
+from db import households, collectors, collection_dates, collection_requests, admins
 
 
 app = Flask(__name__)
@@ -173,3 +173,21 @@ def get_collection_request(collection_request_id):
         return {"error": "Collection request not found"}, 404
 
 
+@app.get("/admins")
+def get_all_admins():
+    """
+    Get all admins in the database
+    """
+    return {"admins": list(admins.values())}
+
+
+@app.post("/admins")
+def create_new_admin():
+    """
+    Add a new admin to the database
+    """
+    admin_data = request.get_json()
+    admin_id = uuid.uuid4().hex
+    new_admin = {**admin_data, "id": admin_id}
+    admins[admin_id] = new_admin
+    return new_admin, 201
