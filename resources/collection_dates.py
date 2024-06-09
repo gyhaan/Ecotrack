@@ -2,11 +2,12 @@
 Blueprint for handling collection dates
 """
 
-import uuid
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from db import collection_dates
+from sqlalchemy.exc import SQLAlchemyError
+
+from db import db
+from models import CollectionDateModel
 from schemas import CollectionDateSchema
 
 
@@ -14,7 +15,7 @@ blp = Blueprint(
     "collection_dates",
     __name__,
     description="Operations on collection dates"
-    )
+)
 
 
 @blp.route("/collection_dates")
@@ -31,26 +32,35 @@ class CollectionDates(MethodView):
             dict: A dictionary containing all collection dates
             in the database
         """
-        return collection_dates.values()
+        return CollectionDateModel.query.all()
 
     @blp.arguments(CollectionDateSchema)
     @blp.response(201, CollectionDateSchema)
-    def post(self):
+    def post(self, collection_date_data):
         """
-        Add a new collection date to the database
+        Add a new collection date to the database.
+
+        Args:
+            collection_date_data (dict): A dictionary containing the data
+            for the new collection date.
 
         Returns:
-            tuple: A tuple containing the newly added collection date and the
-            HTTP status code 201
+            CollectionDateModel: The newly created collection date object.
+
+        Raises:
+            abort(400, message): If there is an error adding the collection
+            date to the database.
         """
-        collection_date_data = request.get_json()
-        collection_date_id = uuid.uuid4().hex
-        new_collection_date = {
-            **collection_date_data,
-            "id": collection_date_id
-            }
-        collection_dates[collection_date_id] = new_collection_date
-        return new_collection_date
+        collection_date = CollectionDateModel(**collection_date_data)
+
+        try:
+            db.session.add(collection_date)
+            db.session.commit()
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            abort(400, message=str(error))
+
+        return collection_date
 
 
 @blp.route("/collection_dates/<collection_date_id>")
@@ -65,17 +75,13 @@ class CollectionDate(MethodView):
         Get a collection date by ID
 
         Args:
-            collection_date_id (str): The ID of the collection date to
-            retrieve
+            collection_date_id (str): The ID of the collection date to retrieve
 
         Returns:
-            tuple: A tuple containing the collection date and the
-            HTTP status code 200
+            tuple: A tuple containing the collection date and the HTTP
+            status code 200
         """
-        try:
-            return collection_dates[collection_date_id]
-        except KeyError:
-            abort(404, message="Collection date not found.")
+        return CollectionDateModel.query.get_or_404(collection_date_id)
 
     def delete(self, collection_date_id):
         """
@@ -85,10 +91,17 @@ class CollectionDate(MethodView):
             collection_date_id (str): The ID of the collection date to delete
 
         Returns:
-            tuple: A tuple containing a message and the HTTP status code 200
+            dict: A dictionary containing a message indicating the success of
+            the deletion
+
+        Raises:
+            NotFound: If the collection date with the specified ID
+            does not exist
+
         """
-        try:
-            del collection_dates[collection_date_id]
-            return {"message": "Collection date deleted"}, 200
-        except KeyError:
-            abort(404, message="Collection date not found.")
+        collection_date = CollectionDateModel.query.get_or_404(
+            collection_date_id)
+        db.session.delete(collection_date)
+        db.session.commit()
+
+        return {"message": "Collection date deleted successfully."}

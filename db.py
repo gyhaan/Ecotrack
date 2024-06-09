@@ -1,10 +1,12 @@
 """
-This file contains the data structures that will be used to store
-the data that will be collected from the users.
+This module initializes the SQLAlchemy object for the Flask application.
+
+Attributes:
+    db (SQLAlchemy): The SQLAlchemy object used for database operations.
 """
 
-households = {}
-collectors = {}
-collection_dates = {}
-collection_requests = {}
-admins = {}
+
+from flask_sqlalchemy import SQLAlchemy
+
+
+db = SQLAlchemy()

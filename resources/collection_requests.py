@@ -2,11 +2,12 @@
 Blueprint for handling collection requests
 """
 
-import uuid
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from db import collection_requests
+from sqlalchemy.exc import SQLAlchemyError
+
+from db import db
+from models import CollectionRequestModel
 from schemas import CollectionRequestSchema
 
 
@@ -14,7 +15,7 @@ blp = Blueprint(
     "collection_requests",
     __name__,
     description="Operations on collection requests"
-    )
+)
 
 
 @blp.route("/collection_requests")
@@ -31,27 +32,35 @@ class CollectionRequests(MethodView):
             dict: A dictionary containing all collection requests in
             the database
         """
-        return collection_requests.values()
+        return CollectionRequestModel.query.all()
 
     @blp.arguments(CollectionRequestSchema)
     @blp.response(201, CollectionRequestSchema)
-    def post(self):
+    def post(self, collection_request_data):
         """
         Add a new collection request to the database
 
+        Args:
+            collection_request_data (dict): A dictionary containing the
+            data for the new collection request
+
         Returns:
-            tuple: A tuple containing the newly added collection request
-            and the
-            HTTP status code 201
+            dict: A dictionary containing the newly created collection request
+
+        Raises:
+            abort(400, message): If there is an error adding the collection
+            request to the database
         """
-        collection_request_data = request.get_json()
-        collection_request_id = uuid.uuid4().hex
-        new_collection_request = {
-            **collection_request_data,
-            "id": collection_request_id
-            }
-        collection_requests[collection_request_id] = new_collection_request
-        return new_collection_request
+        collection_request = CollectionRequestModel(**collection_request_data)
+
+        try:
+            db.session.add(collection_request)
+            db.session.commit()
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            abort(400, message=str(error))
+
+        return collection_request
 
 
 @blp.route("/collection_requests/<collection_request_id>")
@@ -67,30 +76,36 @@ class CollectionRequest(MethodView):
 
         Args:
             collection_request_id (str): The ID of the collection request
-            to retrieve
+                to retrieve
 
         Returns:
-            tuple: A tuple containing the collection request and the
-            HTTP status code 200
+            dict: A dictionary containing the requested collection request
+
+        Raises:
+            NotFound: If the collection request with the given ID does
+            not exist
         """
-        try:
-            return collection_requests[collection_request_id]
-        except KeyError:
-            abort(404, message="Collection request not found.")
+        return CollectionRequestModel.query.get_or_404(collection_request_id)
 
     def delete(self, collection_request_id):
         """
         Delete a collection request by ID
 
         Args:
-            collection_request_id (str): The ID of the collection
-            request to delete
+            collection_request_id (str): The ID of the collection request
+            to delete
 
         Returns:
-            tuple: A tuple containing a message and the HTTP status code 200
+            dict: A dictionary containing a message indicating the success
+            of the deletion
+
+        Raises:
+            NotFound: If the collection request with the given ID does
+            not exist
         """
-        try:
-            del collection_requests[collection_request_id]
-            return {"message": "Collection request deleted"}, 200
-        except KeyError:
-            abort(404, message="Collection request not found.")
+        collection_request = CollectionRequestModel.query.get_or_404(
+            collection_request_id)
+        db.session.delete(collection_request)
+        db.session.commit()
+
+        return {"message": "Collection request deleted successfully."}

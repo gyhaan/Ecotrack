@@ -5,7 +5,7 @@ This file contains the schema for the various models.
 from marshmallow import Schema, fields
 
 
-class HouseholdSchema(Schema):
+class PlainHouseholdSchema(Schema):
     """
     This schema represents a household.
     """
@@ -14,7 +14,7 @@ class HouseholdSchema(Schema):
     area = fields.Str(required=True)
 
 
-class CollectorSchema(Schema):
+class PlainCollectorSchema(Schema):
     """
     This schema represents a collector.
     """
@@ -22,7 +22,7 @@ class CollectorSchema(Schema):
     allocated_area = fields.Str(required=True)
 
 
-class CollectionDateSchema(Schema):
+class PlainCollectionDateSchema(Schema):
     """
     This schema represents a collection date.
     """
@@ -30,10 +30,46 @@ class CollectionDateSchema(Schema):
     date = fields.Date(required=True)
 
 
-class CollectionRequestSchema(Schema):
+class PlainCollectionRequestSchema(Schema):
     """
     This schema represents a collection request.
     """
     id = fields.Int(dump_only=True)
-    household_id = fields.Int(required=True)
+    status = fields.Str(missing="pending")
+    household_id = fields.Str(required=True)
     collection_date_id = fields.Int(required=True)
+
+
+class CollectionRequestSchema(PlainCollectionRequestSchema):
+    """
+    This schema represents a collection request with relationships.
+    """
+    household_id = fields.Int(required=True, load_only=True)
+    collection_date_id = fields.Int(required=True, load_only=True)
+    household = fields.Nested(PlainHouseholdSchema(), dump_only=True)
+    collection_date = fields.Nested(
+        PlainCollectionDateSchema(), dump_only=True)
+
+
+class CollectionDateSchema(PlainCollectionDateSchema):
+    """
+    This schema represents a collection date with relationships.
+    """
+    collection_requests = fields.List(fields.Nested(
+        PlainCollectionRequestSchema()), dump_only=True)
+
+
+class HouseholdSchema(PlainHouseholdSchema):
+    """
+    This schema represents a household with relationships.
+    """
+    collection_requests = fields.List(fields.Nested(
+        PlainCollectionRequestSchema()), dump_only=True)
+
+
+class CollectorSchema(PlainCollectorSchema):
+    """
+    This schema represents a collector with relationships.
+    """
+    collection_dates = fields.List(fields.Nested(
+        PlainCollectionDateSchema()), dump_only=True)
