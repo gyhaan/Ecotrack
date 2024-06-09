@@ -5,6 +5,8 @@ Entry point of the application
 from flask import Flask
 from flask_smorest import Api
 
+from db import db
+import models
 from resources.household import blp as HouseholdBlp
 from resources.collector import blp as CollectorBlp
 from resources.collection_dates import blp as CollectionDatesBlp
