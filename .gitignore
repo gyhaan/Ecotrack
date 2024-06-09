@@ -4,6 +4,7 @@
 
 # ignore python cache files
 __pycache__/
+resources/__pycache__/
 
 # ignore other personal helper files
 endpoints.txt
