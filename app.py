@@ -124,7 +124,7 @@ def create_new_collection_date():
     return new_collection_date, 201
 
 
-# 
+# -------------------  COLLECTION REQUESTS -------------------
 @app.get("/collection_requests")
 def get_all_collection_requests():
     """
@@ -148,3 +148,28 @@ def create_new_collection_request():
         }
     collection_requests[collection_request_id] = new_collection_date
     return new_collection_date, 201
+
+
+@app.delete("/collection_requests/<collection_request_id>")
+def delete_collection_request(collection_request_id):
+    """
+    Delete a collection request by ID
+    """
+    try:
+        del collection_requests[collection_request_id]
+        return {"message": "Collection request deleted"}, 200
+    except KeyError:
+        return {"error": "Collection request not found"}, 404
+
+
+@app.get("/collection_requests/<collection_request_id>")
+def get_collection_request(collection_request_id):
+    """
+    Get a collection request by ID
+    """
+    try:
+        return collection_requests[collection_request_id], 200
+    except KeyError:
+        return {"error": "Collection request not found"}, 404
+
+
