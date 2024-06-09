@@ -21,6 +21,7 @@ class Collectors(MethodView):
     """
     Class for handling requests to the /collectors endpoint
     """
+    @blp.response(200, CollectorSchema(many=True))
     def get(self):
         """
         Get all collectors in the database
@@ -50,6 +51,7 @@ class Collector(MethodView):
     """
     Class for handling requests to the /collectors/<collector_id> endpoint
     """
+    @blp.response(200, CollectorSchema)
     def get(self, collector_id):
         """
         Get a collector by ID

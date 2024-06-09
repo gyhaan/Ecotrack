@@ -21,6 +21,7 @@ class Households(MethodView):
     """
     Class for handling requests to the /households endpoint
     """
+    @blp.response(200, HouseholdSchema(many=True))
     def get(self):
         """
         Get all households in the database
@@ -50,6 +51,7 @@ class Household(MethodView):
     """
     Class for handling requests to the /households/<household_id> endpoint
     """
+    @blp.response(200, HouseholdSchema)
     def get(self, household_id):
         """
         Get a household by ID

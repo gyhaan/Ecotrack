@@ -22,6 +22,7 @@ class CollectionRequests(MethodView):
     """
     Class for handling requests to the /collection_requests endpoint
     """
+    @blp.response(200, CollectionRequestSchema(many=True))
     def get(self):
         """
         Get all collection requests in the database
@@ -58,6 +59,7 @@ class CollectionRequest(MethodView):
     Class for handling requests to the
     /collection_requests/<collection_request_id> endpoint
     """
+    @blp.response(200, CollectionRequestSchema)
     def get(self, collection_request_id):
         """
         Get a collection request by ID

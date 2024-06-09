@@ -22,6 +22,7 @@ class CollectionDates(MethodView):
     """
     Class for handling requests to the /collection_dates endpoint
     """
+    @blp.response(200, CollectionDateSchema(many=True))
     def get(self):
         """
         Get all collection dates in the database
@@ -57,6 +58,7 @@ class CollectionDate(MethodView):
     Class for handling requests to the /collection_dates/<collection_date_id>
     endpoint
     """
+    @blp.response(200, CollectionDateSchema)
     def get(self, collection_date_id):
         """
         Get a collection date by ID
