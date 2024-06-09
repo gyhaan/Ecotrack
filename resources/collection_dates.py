@@ -95,7 +95,8 @@ class CollectionDate(MethodView):
             the deletion
 
         Raises:
-            NotFound: If the collection date with the specified ID does not exist
+            NotFound: If the collection date with the specified ID
+            does not exist
 
         """
         collection_date = CollectionDateModel.query.get_or_404(

@@ -1,5 +1,6 @@
 """
-This module contains the model for the collection_request table in the database.
+This module contains the model for the collection_request table
+in the database.
 """
 
 from db import db

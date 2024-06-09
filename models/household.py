@@ -35,4 +35,3 @@ class HouseholdModel(db.Model):
         back_populates="household",
         lazy="dynamic"
         )
-

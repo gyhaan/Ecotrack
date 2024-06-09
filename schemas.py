@@ -47,25 +47,29 @@ class CollectionRequestSchema(PlainCollectionRequestSchema):
     household_id = fields.Int(required=True, load_only=True)
     collection_date_id = fields.Int(required=True, load_only=True)
     household = fields.Nested(PlainHouseholdSchema(), dump_only=True)
-    collection_date = fields.Nested(PlainCollectionDateSchema(), dump_only=True)
+    collection_date = fields.Nested(
+        PlainCollectionDateSchema(), dump_only=True)
 
 
 class CollectionDateSchema(PlainCollectionDateSchema):
     """
     This schema represents a collection date with relationships.
     """
-    collection_requests = fields.List(fields.Nested(PlainCollectionRequestSchema()), dump_only=True)
+    collection_requests = fields.List(fields.Nested(
+        PlainCollectionRequestSchema()), dump_only=True)
 
 
 class HouseholdSchema(PlainHouseholdSchema):
     """
     This schema represents a household with relationships.
     """
-    collection_requests = fields.List(fields.Nested(PlainCollectionRequestSchema()), dump_only=True)
+    collection_requests = fields.List(fields.Nested(
+        PlainCollectionRequestSchema()), dump_only=True)
 
 
 class CollectorSchema(PlainCollectorSchema):
     """
     This schema represents a collector with relationships.
     """
-    collection_dates = fields.List(fields.Nested(PlainCollectionDateSchema()), dump_only=True)
+    collection_dates = fields.List(fields.Nested(
+        PlainCollectionDateSchema()), dump_only=True)
