@@ -10,7 +10,7 @@ from db import households, collectors, collection_dates, collection_requests
 app = Flask(__name__)
 
 @app.get("/households")
-def get_households():
+def get_all_households():
     """
     Get all households in the database
     """
@@ -53,7 +53,7 @@ def delete_household(household_id):
 
 
 @app.get("/collectors")
-def get_collectors():
+def get_all_collectors():
     """
     Get all collectors in the database
     """
@@ -93,3 +93,25 @@ def delete_collector(collector_id):
         return {"message": "Collector deleted"}, 200
     except KeyError:
         return {"error": "Collector not found"}, 404
+
+
+@app.get("/collection_dates")
+def get_all_collection_dates():
+    """
+    Get all collection dates in the database
+    """
+    return {"collection_dates": list(collection_dates.values())}
+
+
+@app.post("/collection_dates")
+def create_new_collection_date():
+    """
+    Add a new collection date to the database
+    """
+    collection_date_data = request.get_json()
+    if collection_date_data["collector_id"] not in collectors:
+        return {"error": "Collector not found"}, 404
+    collection_date_id = uuid.uuid4().hex
+    new_collection_date = {**collection_date_data, "id": collection_date_id}
+    collection_dates[collection_date_id] = new_collection_date
+    return new_collection_date, 201
