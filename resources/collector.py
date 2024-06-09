@@ -5,7 +5,6 @@ Blueprint for handling requests to the /collectors endpoint
 import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from db import collectors
 from schemas import CollectorSchema
 
 

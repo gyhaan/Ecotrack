@@ -5,7 +5,7 @@ Blueprint for household resources
 import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from db import households
+
 from schemas import HouseholdSchema
 
 
@@ -27,9 +27,9 @@ class Households(MethodView):
         Get all households in the database
 
         Returns:
-            dict: A dictionary containing all households in the database
+            dict: A dictionary containing all households in the databasev
         """
-        return households.values()
+        return Households.query.all()
 
     @blp.arguments(HouseholdSchema)
     @blp.response(201, HouseholdSchema)
