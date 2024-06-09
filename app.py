@@ -191,3 +191,14 @@ def create_new_admin():
     new_admin = {**admin_data, "id": admin_id}
     admins[admin_id] = new_admin
     return new_admin, 201
+
+
+@app.get("/admins/<admin_id>")
+def get_admin(admin_id):
+    """
+    Get an admin by ID
+    """
+    try:
+        return admins[admin_id], 200
+    except KeyError:
+        return {"error": "Admin not found"}, 404
