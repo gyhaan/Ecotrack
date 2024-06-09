@@ -7,6 +7,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import collection_dates
+from schemas import CollectionDateSchema
 
 
 blp = Blueprint(
@@ -31,6 +32,7 @@ class CollectionDates(MethodView):
         """
         return {"collection_dates": list(collection_dates.values())}
 
+    @blp.arguments(CollectionDateSchema)
     def post(self):
         """
         Add a new collection date to the database

@@ -7,6 +7,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import households
+from schemas import HouseholdSchema
 
 
 blp = Blueprint(
@@ -30,7 +31,8 @@ class Households(MethodView):
         """
         return {"households": list(households.values())}
 
-    def post(self):
+    @blp.arguments(HouseholdSchema)
+    def post(self, household_data):
         """
         Add a new household to the database
 
@@ -38,7 +40,6 @@ class Households(MethodView):
             tuple: A tuple containing the newly added household and the
             HTTP status code 201
         """
-        household_data = request.get_json()
         household_id = uuid.uuid4().hex
         new_household = {**household_data, "id": household_id}
         households[household_id] = new_household

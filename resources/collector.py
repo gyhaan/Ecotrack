@@ -7,6 +7,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import collectors
+from schemas import CollectorSchema
 
 
 blp = Blueprint(
@@ -30,7 +31,8 @@ class Collectors(MethodView):
         """
         return {"collectors": list(collectors.values())}
 
-    def post(self):
+    @blp.arguments(CollectorSchema)
+    def post(self, collector_data):
         """
         Add a new collector to the database
 
@@ -38,7 +40,6 @@ class Collectors(MethodView):
             tuple: A tuple containing the newly added collector and the
             HTTP status code 201
         """
-        collector_data = request.get_json()
         collector_id = uuid.uuid4().hex
         new_collector = {**collector_data, "id": collector_id}
         collectors[collector_id] = new_collector

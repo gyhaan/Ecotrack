@@ -7,6 +7,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import collection_requests
+from schemas import CollectionRequestSchema
 
 
 blp = Blueprint(
@@ -31,6 +32,7 @@ class CollectionRequests(MethodView):
         """
         return {"collection_requests": list(collection_requests.values())}
 
+    @blp.arguments(CollectionRequestSchema)
     def post(self):
         """
         Add a new collection request to the database
