@@ -6,6 +6,7 @@ import os
 
 from flask import Flask
 from flask_smorest import Api
+from flask_jwt_extended import JWTManager
 
 from db import db
 from resources.household import blp as HouseholdBlp
@@ -32,6 +33,8 @@ def create_app(db_url=None):
     db.init_app(app)
 
     api = Api(app)
+
+    app.config["JWT_SECRET_KEY"] = "not-so-secret"
 
     with app.app_context():
         db.create_all()

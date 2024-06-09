@@ -73,3 +73,12 @@ class CollectorSchema(PlainCollectorSchema):
     """
     collection_dates = fields.List(fields.Nested(
         PlainCollectionDateSchema()), dump_only=True)
+
+
+class UserSchema(Schema):
+    """
+    This schema represents a user.
+    """
+    id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
