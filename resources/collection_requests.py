@@ -26,7 +26,8 @@ class CollectionRequests(MethodView):
         Get all collection requests in the database
 
         Returns:
-            dict: A dictionary containing all collection requests in the database
+            dict: A dictionary containing all collection requests in
+            the database
         """
         return {"collection_requests": list(collection_requests.values())}
 
@@ -35,12 +36,16 @@ class CollectionRequests(MethodView):
         Add a new collection request to the database
 
         Returns:
-            tuple: A tuple containing the newly added collection request and the
+            tuple: A tuple containing the newly added collection request
+            and the
             HTTP status code 201
         """
         collection_request_data = request.get_json()
         collection_request_id = uuid.uuid4().hex
-        new_collection_request = {**collection_request_data, "id": collection_request_id}
+        new_collection_request = {
+            **collection_request_data,
+            "id": collection_request_id
+            }
         collection_requests[collection_request_id] = new_collection_request
         return new_collection_request, 201
 
@@ -48,17 +53,20 @@ class CollectionRequests(MethodView):
 @blp.route("/collection_requests/<collection_request_id>")
 class CollectionRequest(MethodView):
     """
-    Class for handling requests to the /collection_requests/<collection_request_id> endpoint
+    Class for handling requests to the
+    /collection_requests/<collection_request_id> endpoint
     """
     def get(self, collection_request_id):
         """
         Get a collection request by ID
 
         Args:
-            collection_request_id (str): The ID of the collection request to retrieve
+            collection_request_id (str): The ID of the collection request
+            to retrieve
 
         Returns:
-            tuple: A tuple containing the collection request and the HTTP status code 200
+            tuple: A tuple containing the collection request and the
+            HTTP status code 200
         """
         try:
             return collection_requests[collection_request_id], 200
@@ -70,7 +78,8 @@ class CollectionRequest(MethodView):
         Delete a collection request by ID
 
         Args:
-            collection_request_id (str): The ID of the collection request to delete
+            collection_request_id (str): The ID of the collection
+            request to delete
 
         Returns:
             tuple: A tuple containing a message and the HTTP status code 200

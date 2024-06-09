@@ -26,7 +26,8 @@ class CollectionDates(MethodView):
         Get all collection dates in the database
 
         Returns:
-            dict: A dictionary containing all collection dates in the database
+            dict: A dictionary containing all collection dates
+            in the database
         """
         return {"collection_dates": list(collection_dates.values())}
 
@@ -40,7 +41,10 @@ class CollectionDates(MethodView):
         """
         collection_date_data = request.get_json()
         collection_date_id = uuid.uuid4().hex
-        new_collection_date = {**collection_date_data, "id": collection_date_id}
+        new_collection_date = {
+            **collection_date_data,
+            "id": collection_date_id
+            }
         collection_dates[collection_date_id] = new_collection_date
         return new_collection_date, 201
 
@@ -48,17 +52,20 @@ class CollectionDates(MethodView):
 @blp.route("/collection_dates/<collection_date_id>")
 class CollectionDate(MethodView):
     """
-    Class for handling requests to the /collection_dates/<collection_date_id> endpoint
+    Class for handling requests to the /collection_dates/<collection_date_id>
+    endpoint
     """
     def get(self, collection_date_id):
         """
         Get a collection date by ID
 
         Args:
-            collection_date_id (str): The ID of the collection date to retrieve
+            collection_date_id (str): The ID of the collection date to
+            retrieve
 
         Returns:
-            tuple: A tuple containing the collection date and the HTTP status code 200
+            tuple: A tuple containing the collection date and the
+            HTTP status code 200
         """
         try:
             return collection_dates[collection_date_id], 200
