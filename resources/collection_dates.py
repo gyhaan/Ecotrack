@@ -15,7 +15,7 @@ blp = Blueprint(
     "collection_dates",
     __name__,
     description="Operations on collection dates"
-    )
+)
 
 
 @blp.route("/collection_dates")
@@ -41,13 +41,15 @@ class CollectionDates(MethodView):
         Add a new collection date to the database.
 
         Args:
-            collection_date_data (dict): A dictionary containing the data for the new collection date.
+            collection_date_data (dict): A dictionary containing the data
+            for the new collection date.
 
         Returns:
             CollectionDateModel: The newly created collection date object.
 
         Raises:
-            abort(400, message): If there is an error adding the collection date to the database.
+            abort(400, message): If there is an error adding the collection
+            date to the database.
         """
         collection_date = CollectionDateModel(**collection_date_data)
 
@@ -76,7 +78,8 @@ class CollectionDate(MethodView):
             collection_date_id (str): The ID of the collection date to retrieve
 
         Returns:
-            tuple: A tuple containing the collection date and the HTTP status code 200
+            tuple: A tuple containing the collection date and the HTTP
+            status code 200
         """
         return CollectionDateModel.query.get_or_404(collection_date_id)
 
@@ -88,13 +91,15 @@ class CollectionDate(MethodView):
             collection_date_id (str): The ID of the collection date to delete
 
         Returns:
-            dict: A dictionary containing a message indicating the success of the deletion
+            dict: A dictionary containing a message indicating the success of
+            the deletion
 
         Raises:
             NotFound: If the collection date with the specified ID does not exist
 
         """
-        collection_date = CollectionDateModel.query.get_or_404(collection_date_id)
+        collection_date = CollectionDateModel.query.get_or_404(
+            collection_date_id)
         db.session.delete(collection_date)
         db.session.commit()
 

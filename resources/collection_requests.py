@@ -41,13 +41,15 @@ class CollectionRequests(MethodView):
         Add a new collection request to the database
 
         Args:
-            collection_request_data (dict): A dictionary containing the data for the new collection request
+            collection_request_data (dict): A dictionary containing the
+            data for the new collection request
 
         Returns:
             dict: A dictionary containing the newly created collection request
 
         Raises:
-            abort(400, message): If there is an error adding the collection request to the database
+            abort(400, message): If there is an error adding the collection
+            request to the database
         """
         collection_request = CollectionRequestModel(**collection_request_data)
 
@@ -80,7 +82,8 @@ class CollectionRequest(MethodView):
             dict: A dictionary containing the requested collection request
 
         Raises:
-            NotFound: If the collection request with the given ID does not exist
+            NotFound: If the collection request with the given ID does
+            not exist
         """
         return CollectionRequestModel.query.get_or_404(collection_request_id)
 
@@ -89,13 +92,16 @@ class CollectionRequest(MethodView):
         Delete a collection request by ID
 
         Args:
-            collection_request_id (str): The ID of the collection request to delete
+            collection_request_id (str): The ID of the collection request
+            to delete
 
         Returns:
-            dict: A dictionary containing a message indicating the success of the deletion
+            dict: A dictionary containing a message indicating the success
+            of the deletion
 
         Raises:
-            NotFound: If the collection request with the given ID does not exist
+            NotFound: If the collection request with the given ID does
+            not exist
         """
         collection_request = CollectionRequestModel.query.get_or_404(
             collection_request_id)

@@ -40,10 +40,12 @@ class Collectors(MethodView):
         Add a new collector to the database.
 
         Args:
-            collector_data (dict): A dictionary containing the data for the new collector.
+            collector_data (dict): A dictionary containing the data
+            for the new collector.
 
         Returns:
-            tuple: A tuple containing the newly added collector and the HTTP status code 201.
+            tuple: A tuple containing the newly added collector and the
+            HTTP status code 201.
 
         Raises:
             abort: If there is an error adding the collector to the database.

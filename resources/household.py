@@ -7,7 +7,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 
-form db import db
+from db import db
 from models import HouseholdModel
 from schemas import HouseholdSchema
 
@@ -16,7 +16,7 @@ blp = Blueprint(
     "households",
     __name__,
     description="Operations on households"
-    )
+)
 
 
 @blp.route("/households")
@@ -41,10 +41,12 @@ class Households(MethodView):
         Add a new household to the database
 
         Args:
-            household_data (dict): A dictionary containing the data for the new household
+            household_data (dict): A dictionary containing the data for the
+            new household
 
         Returns:
-            tuple: A tuple containing the newly added household and the HTTP status code 201
+            tuple: A tuple containing the newly added household and the
+            HTTP status code 201
 
         Raises:
             abort: If there is an error adding the household to the database
