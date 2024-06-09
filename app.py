@@ -4,6 +4,7 @@ Entry point of the application
 import uuid
 
 from flask import Flask, request
+from flask_smorest import abort
 from db import households, collectors, collection_dates, collection_requests, admins
 
 
@@ -39,7 +40,7 @@ def get_household(household_id):
     try:
         return households[household_id], 200
     except KeyError:
-        return {"error": "Household not found"}, 404
+        abort(404, message="Household not found")
 
 
 @app.delete("/households/<household_id>")
@@ -51,7 +52,7 @@ def delete_household(household_id):
         del households[household_id]
         return {"message": "Household deleted"}, 200
     except KeyError:
-        return {"error": "Household not found"}, 404
+        abort(404, message="Household not found")
 
 
 @app.get("/collectors")
@@ -83,7 +84,7 @@ def get_collector(collector_id):
     try:
         return collectors[collector_id], 200
     except KeyError:
-        return {"error": "Collector not found"}, 404
+        abort(404, message="Collector not found")
 
 
 @app.delete("/collectors/<collector_id>")
@@ -95,7 +96,7 @@ def delete_collector(collector_id):
         del collectors[collector_id]
         return {"message": "Collector deleted"}, 200
     except KeyError:
-        return {"error": "Collector not found"}, 404
+        abort(404, message="Collector not found")
 
 
 # -------------------  COLLECTION DATES -------------------
@@ -114,7 +115,7 @@ def create_new_collection_date():
     """
     collection_date_data = request.get_json()
     if collection_date_data["collector_id"] not in collectors:
-        return {"error": "Collector not found"}, 404
+        abort(404, message="Collector not found")
     collection_date_id = uuid.uuid4().hex
     new_collection_date = {
         **collection_date_data,
@@ -140,7 +141,7 @@ def create_new_collection_request():
     """
     collection_request_data = request.get_json()
     if collection_request_data["household_id"] not in households:
-        return {"error": "Household not found"}, 404
+        abort(404, message="Household not found")
     collection_request_id = uuid.uuid4().hex
     new_collection_date = {
         **collection_request_data,
@@ -159,7 +160,7 @@ def delete_collection_request(collection_request_id):
         del collection_requests[collection_request_id]
         return {"message": "Collection request deleted"}, 200
     except KeyError:
-        return {"error": "Collection request not found"}, 404
+        abort(404, message="Collection request not found")
 
 
 @app.get("/collection_requests/<collection_request_id>")
@@ -201,4 +202,4 @@ def get_admin(admin_id):
     try:
         return admins[admin_id], 200
     except KeyError:
-        return {"error": "Admin not found"}, 404
+        abort(404, message="Admin not found")
