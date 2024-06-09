@@ -9,6 +9,7 @@ from db import households, collectors, collection_dates, collection_requests
 
 app = Flask(__name__)
 
+
 @app.get("/households")
 def get_all_households():
     """
