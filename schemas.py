@@ -10,8 +10,8 @@ class PlainHouseholdSchema(Schema):
     This schema represents a household.
     """
     id = fields.Int(dump_only=True)
-    house_number = fields.Int(required=True)
-    area = fields.Int(required=True)
+    house_number = fields.Str(required=True)
+    area = fields.Str(required=True)
 
 
 class PlainCollectorSchema(Schema):
@@ -19,7 +19,7 @@ class PlainCollectorSchema(Schema):
     This schema represents a collector.
     """
     id = fields.Int(dump_only=True)
-    allocated_area = fields.Int(required=True)
+    allocated_area = fields.Str(required=True)
 
 
 class PlainCollectionDateSchema(Schema):
@@ -36,7 +36,7 @@ class PlainCollectionRequestSchema(Schema):
     """
     id = fields.Int(dump_only=True)
     status = fields.Str(missing="pending")
-    household_id = fields.Int(required=True)
+    household_id = fields.Str(required=True)
     collection_date_id = fields.Int(required=True)
 
 

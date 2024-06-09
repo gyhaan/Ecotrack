@@ -8,3 +8,6 @@ resources/__pycache__/
 
 # ignore other personal helper files
 endpoints.txt
+
+# ignore the database
+instance/

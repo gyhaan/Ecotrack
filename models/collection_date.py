@@ -36,3 +36,8 @@ class CollectionDateModel(db.Model):
         "CollectorModel",
         back_populates="collection_dates"
         )
+    collection_requests = db.relationship(
+        "CollectionRequestModel",
+        back_populates="collection_date",
+        lazy="dynamic"
+        )
