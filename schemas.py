@@ -14,6 +14,13 @@ class PlainUserSchema(Schema):
     password = fields.Str(required=True, load_only=True)
 
 
+class PlainAdminSchema(Schema):
+    """
+    This schema represents an admin.
+    """
+    id = fields.Int(dump_only=True)
+
+
 class PlainHouseholdSchema(Schema):
     """
     This schema represents a household.
@@ -56,6 +63,13 @@ class UserSchema(PlainUserSchema):
     household = fields.Nested(PlainHouseholdSchema(), dump_only=True)
     collector = fields.Nested(PlainCollectorSchema(), dump_only=True)
 
+
+class AdminSchema(PlainAdminSchema):
+    """
+    This schema represents an admin with relationships.
+    """
+    user_id = fields.Int(required=True)
+    user = fields.Nested(PlainUserSchema(), dump_only=True)
 
 class CollectionRequestSchema(PlainCollectionRequestSchema):
     """
