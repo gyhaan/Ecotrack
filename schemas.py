@@ -75,10 +75,17 @@ class CollectorSchema(PlainCollectorSchema):
         PlainCollectionDateSchema()), dump_only=True)
 
 
-class UserSchema(Schema):
+class PlainUserSchema(Schema):
     """
-    This schema represents a user.
+    This schema represents a user with no relationships.
     """
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)
+
+
+class UserSchema(PlainUserSchema):
+    """
+    This schema represents a user with relationships.
+    """
+    household = fields.Nested(PlainHouseholdSchema(), dump_only=True)

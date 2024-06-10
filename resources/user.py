@@ -76,9 +76,9 @@ class UserLogin(MethodView):
         return {"message": "Logged in successfully", "access_token": access_token}
 
 
-@blp.route("/users/<int:user_id>")
+@blp.route("/users/<user_id>")
 class User(MethodView):
-    @blp.response(UserSchema)
+    @blp.response(200, UserSchema)
     def get(self, user_id):
         """
         Get a user by ID

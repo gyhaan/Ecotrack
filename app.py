@@ -33,6 +33,8 @@ def create_app(db_url=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
+    jwt = JWTManager(app)
+
     api = Api(app)
 
     app.config["JWT_SECRET_KEY"] = "not-so-secret"
