@@ -5,6 +5,15 @@ This file contains the schema for the various models.
 from marshmallow import Schema, fields
 
 
+class PlainUserSchema(Schema):
+    """
+    This schema represents a user with no relationships.
+    """
+    id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
+
+
 class PlainHouseholdSchema(Schema):
     """
     This schema represents a household.
@@ -40,6 +49,14 @@ class PlainCollectionRequestSchema(Schema):
     collection_date_id = fields.Int(required=True)
 
 
+class UserSchema(PlainUserSchema):
+    """
+    This schema represents a user with relationships.
+    """
+    household = fields.Nested(PlainHouseholdSchema(), dump_only=True)
+    collector = fields.Nested(PlainCollectorSchema(), dump_only=True)
+
+
 class CollectionRequestSchema(PlainCollectionRequestSchema):
     """
     This schema represents a collection request with relationships.
@@ -63,6 +80,8 @@ class HouseholdSchema(PlainHouseholdSchema):
     """
     This schema represents a household with relationships.
     """
+    user_id = fields.Int(required=True)
+    user = fields.Nested(PlainUserSchema(), dump_only=True)
     collection_requests = fields.List(fields.Nested(
         PlainCollectionRequestSchema()), dump_only=True)
 
@@ -71,21 +90,7 @@ class CollectorSchema(PlainCollectorSchema):
     """
     This schema represents a collector with relationships.
     """
+    user_id = fields.Int(required=True)
     collection_dates = fields.List(fields.Nested(
         PlainCollectionDateSchema()), dump_only=True)
 
-
-class PlainUserSchema(Schema):
-    """
-    This schema represents a user with no relationships.
-    """
-    id = fields.Int(dump_only=True)
-    username = fields.Str(required=True)
-    password = fields.Str(required=True, load_only=True)
-
-
-class UserSchema(PlainUserSchema):
-    """
-    This schema represents a user with relationships.
-    """
-    household = fields.Nested(PlainHouseholdSchema(), dump_only=True)

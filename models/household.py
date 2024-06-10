@@ -30,6 +30,17 @@ class HouseholdModel(db.Model):
         db.String(80),
         nullable=False
         )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        unique=True,
+        nullable=False
+        )
+    user = db.relationship(
+        "UserModel",
+        back_populates="household",
+        uselist=False
+        )
     collection_requests = db.relationship(
         "CollectionRequestModel",
         back_populates="household",
