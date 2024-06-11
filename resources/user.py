@@ -75,7 +75,8 @@ class UserLogin(MethodView):
         user = UserModel.query.filter_by(
             username=user_data["username"]
             ).first()
-        if user is None or not pbkdf2_sha256.verify(user_data["password"], user.password):  # noqa: F401
+        password = user_data["password"]
+        if user is None or not pbkdf2_sha256.verify(password, user.password):
             abort(401, message="Incorrect username or password")
 
         access_token = create_access_token(identity=user.id)
