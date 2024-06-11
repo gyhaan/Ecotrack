@@ -5,6 +5,7 @@ Blueprint for household resources
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required, get_jwt
 
 from db import db
 from models import HouseholdModel
@@ -23,6 +24,7 @@ class Households(MethodView):
     """
     Class for handling requests to the /households endpoint
     """
+    @jwt_required()
     @blp.response(200, HouseholdSchema(many=True))
     def get(self):
         """
@@ -31,8 +33,12 @@ class Households(MethodView):
         Returns:
             dict: A dictionary containing all households in the database
         """
-        return HouseholdModel.query.all()
+        jwt = get_jwt()
+        if jwt.get("role") == "admin":
+            return HouseholdModel.query.all()
+        abort(403, message="Admin privileges required to access resources")
 
+    @jwt_required()
     @blp.arguments(HouseholdSchema)
     @blp.response(201, HouseholdSchema)
     def post(self, household_data):
@@ -51,7 +57,10 @@ class Households(MethodView):
             abort: If there is an error adding the household to the database
 
         """
-        household = HouseholdModel(**household_data)
+        jwt = get_jwt()
+        user_id = jwt.get("sub")
+
+        household = HouseholdModel(**household_data, user_id=user_id)
 
         try:
             db.session.add(household)
@@ -68,6 +77,7 @@ class Household(MethodView):
     """
     Class for handling requests to the /households/<household_id> endpoint
     """
+    @jwt_required()
     @blp.response(200, HouseholdSchema)
     def get(self, household_id):
         """
@@ -83,8 +93,17 @@ class Household(MethodView):
         Raises:
             404: If the household with the given ID is not found
         """
-        return HouseholdModel.query.get_or_404(household_id)
+        jwt = get_jwt()
+        user_role = jwt.get("role")
 
+        if user_role in ("admin", "collector"):
+            return HouseholdModel.query.get_or_404(household_id)
+        abort(
+            403,
+            message="Household/admin privileges required to access resources"
+            )
+
+    @jwt_required()
     def delete(self, household_id):
         """
         Delete a household by ID
@@ -99,6 +118,14 @@ class Household(MethodView):
         Raises:
             404: If the household with the given ID is not found
         """
+
+        jwt = get_jwt()
+        if jwt.get("role") != "admin":
+            abort(
+                403,
+                message="Admin privileges required to delete a household"
+                )
+
         household = HouseholdModel.query.get_or_404(household_id)
 
         db.session.delete(household)
