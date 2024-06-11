@@ -99,7 +99,10 @@ class Household(MethodView):
 
         if user_role in ("admin", "collector"):
             return HouseholdModel.query.get_or_404(household_id)
-        abort(403, message="Household or admin privileges required to access resources")
+        abort(
+            403,
+            message="Household/admin privileges required to access resources"
+            )
 
     @jwt_required()
     def delete(self, household_id):
@@ -119,7 +122,10 @@ class Household(MethodView):
 
         jwt = get_jwt()
         if jwt.get("role") != "admin":
-            abort(403, message="Admin privileges required to delete a household")
+            abort(
+                403,
+                message="Admin privileges required to delete a household"
+                )
 
         household = HouseholdModel.query.get_or_404(household_id)
 

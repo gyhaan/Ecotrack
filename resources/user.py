@@ -29,12 +29,13 @@ class UserRegister(MethodView):
         Register a new user
 
         Parameters:
-        - user_data (dict): The data of the user to be registered. It should contain the following keys:
+        - user_data (dict): The data of the user to be registered.
+        It should contain the following keys:
             - username (str): The username of the user.
             - password (str): The password of the user.
 
         Returns:
-        - dict: A dictionary containing the message "User created successfully".
+        - dict: A dictionary containing the message.
 
         Raises:
         - 409 Conflict: If a user with the same username already exists.
@@ -60,18 +61,23 @@ class UserLogin(MethodView):
         Log in a user
 
         Parameters:
-        - user_data (dict): The data of the user to be logged in. It should contain the following keys:
+        - user_data (dict): The data of the user to be logged in.
+        It should contain the following keys:
             - username (str): The username of the user.
             - password (str): The password of the user.
 
         Returns:
-        - dict: A dictionary containing the message "Logged in successfully" and the access token.
+        - dict: A dictionary containing the message and the access token.
 
         Raises:
         - 401 Unauthorized: If the username or password is incorrect.
         """
-        user = UserModel.query.filter_by(username=user_data["username"]).first()
-        if user is None or not pbkdf2_sha256.verify(user_data["password"], user.password):
+        user = UserModel.query.filter_by(
+            username=user_data["username"]
+            ).first()
+        if user is None or not pbkdf2_sha256.verify(
+            user_data["password"], user.password
+            ):
             abort(401, message="Incorrect username or password")
 
         access_token = create_access_token(identity=user.id)
@@ -86,7 +92,11 @@ class UserLogin(MethodView):
         else:
             role = None
 
-        return {"message": "Logged in successfully", "access_token": access_token, "role": role}
+        return {
+            "message": "Logged in successfully",
+            "access_token": access_token,
+            "role": role
+            }
 
 
 @blp.route("/users/<user_id>")
@@ -121,7 +131,7 @@ class User(MethodView):
         - user_id (int): The ID of the user to delete.
 
         Returns:
-        - dict: A dictionary containing the message "User deleted successfully".
+        - dict: A dictionary containing the message.
 
         Raises:
         - 403 Forbidden: If the user does not have admin privileges.
@@ -138,4 +148,7 @@ class User(MethodView):
             db.session.commit()
             return {"message": "User deleted successfully"}
 
-        abort(403, message="Admin privileges required to carry out this action")
+        abort(
+            403,
+            message="Admin privileges required to carry out this action"
+            )

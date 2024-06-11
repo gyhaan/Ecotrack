@@ -41,7 +41,10 @@ class CollectionRequests(MethodView):
             return CollectionRequestModel.query.filter_by(
                 household_id=jwt.get("sub")).all()
 
-        abort(403, message="Admin or household privileges required to access resources")
+        abort(
+            403,
+            message="Admin/household privileges required to access resources"
+            )
 
     @jwt_required()
     @blp.arguments(CollectionRequestSchema)
@@ -63,7 +66,10 @@ class CollectionRequests(MethodView):
         """
         jwt = get_jwt()
         if jwt.get("role") != "household":
-            abort(403, message="Household privileges required to access resources")
+            abort(
+                403,
+                message="Household privileges required to access resources"
+                )
 
         collection_request = CollectionRequestModel(**collection_request_data)
         try:
@@ -120,7 +126,10 @@ class CollectionRequest(MethodView):
         """
         jwt = get_jwt()
         if jwt.get("role") != "household":
-            abort(403, message="Household privileges required to delete a collection request")
+            abort(
+                403,
+                message="Household privilege required to do this action"
+                )
 
         collection_request = CollectionRequestModel.query.get_or_404(
             collection_request_id)

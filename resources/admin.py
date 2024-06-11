@@ -18,6 +18,7 @@ blp = Blueprint(
     description="Operations on admins"
 )
 
+
 @blp.route("/admins")
 class Admins(MethodView):
     """

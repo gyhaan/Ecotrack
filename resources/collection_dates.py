@@ -40,7 +40,7 @@ class CollectionDates(MethodView):
 
         if user_role in ("admin", "household"):
             return CollectionDateModel.query.all()
-        
+
         if user_role == "collector":
             return CollectionDateModel.query.filter_by(
                 collector_id=jwt.get("sub")).all()
@@ -66,7 +66,10 @@ class CollectionDates(MethodView):
         jwt = get_jwt()
 
         if jwt.get("role") != "collector":
-            abort(403, message="Collector privileges required to add collection dates")
+            abort(
+                403,
+                message="Collector privilege required to add collection dates"
+                )
 
         collection_date = CollectionDateModel(**collection_date_data)
 
@@ -93,7 +96,7 @@ class CollectionDate(MethodView):
         Get a collection date by ID
 
         Args:
-            collection_date_id (str): The ID of the collection date to retrieve
+            collection_date_id (str): ID of the collection date to retrieve
 
         Returns:
             tuple: A tuple containing the collection date and the HTTP
@@ -102,8 +105,11 @@ class CollectionDate(MethodView):
         jwt = get_jwt()
         if jwt.get("role") in ("collector", "admin"):
             return CollectionDateModel.query.get_or_404(collection_date_id)
-        
-        abort(403, message="Collector or admin privileges required to view collection dates")
+
+        abort(
+            403,
+            message="Collector privileges required to view collection dates"
+            )
 
     @jwt_required()
     def delete(self, collection_date_id):
@@ -124,7 +130,10 @@ class CollectionDate(MethodView):
         """
         jwt = get_jwt()
         if jwt.get("role") != "admin":
-            abort(403, message="Admin privileges required to delete collection dates")
+            abort(
+                403,
+                message="Admin privileges required to delete collection dates"
+                )
 
         collection_date = CollectionDateModel.query.get_or_404(
             collection_date_id)

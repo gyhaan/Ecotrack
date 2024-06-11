@@ -36,7 +36,10 @@ class Collectors(MethodView):
         jwt = get_jwt()
 
         if jwt.get("role") != "admin":
-            abort(403, message="Admin privileges required to access resources")
+            abort(
+                403,
+                message="Admin privileges required to access resources"
+                )
         return CollectorModel.query.all()
 
     @jwt_required()
@@ -98,7 +101,10 @@ class Collector(MethodView):
         user_role = jwt.get("role")
         if user_role == "admin":
             return CollectorModel.query.get_or_404(collector_id)
-        abort(403, message="Admin or collector privileges required to access this resource")
+        abort(
+            403,
+            message="Admin/collector privileges required"
+            )
 
     @jwt_required()
     def delete(self, collector_id):
@@ -118,7 +124,10 @@ class Collector(MethodView):
         jwt = get_jwt()
 
         if jwt.get("role") != "admin":
-            abort(403, message="Admin privileges required to delete a collector")
+            abort(
+                403,
+                message="Admin privileges required to delete a collector"
+                )
 
         collector = CollectorModel.query.get_or_404(collector_id)
         db.session.delete(collector)
