@@ -58,7 +58,10 @@ class Collectors(MethodView):
             abort: If there is an error adding the collector to the database.
 
         """
-        collector = CollectorModel(**collector_data)
+        jwt = get_jwt()
+        user_id = jwt.get("sub")
+
+        collector = CollectorModel(**collector_data, user_id=user_id)
 
         try:
             db.session.add(collector)
@@ -93,7 +96,7 @@ class Collector(MethodView):
         """
         jwt = get_jwt()
         user_role = jwt.get("role")
-        if user_role in ("admin", "collector"):
+        if user_role == "admin":
             return CollectorModel.query.get_or_404(collector_id)
         abort(403, message="Admin or collector privileges required to access this resource")
 

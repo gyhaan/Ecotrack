@@ -35,8 +35,12 @@ class CollectionRequests(MethodView):
             the database
         """
         jwt = get_jwt()
-        if jwt.get("role") in ("admin", "household"):
+        if jwt.get("role") == "admin":
             return CollectionRequestModel.query.all()
+        elif jwt.get("role") == "household":
+            return CollectionRequestModel.query.filter_by(
+                household_id=jwt.get("sub")).all()
+
         abort(403, message="Admin or household privileges required to access resources")
 
     @jwt_required()
@@ -95,10 +99,7 @@ class CollectionRequest(MethodView):
             NotFound: If the collection request with the given ID does
             not exist
         """
-        jwt = get_jwt()
-        if jwt.get("role") in ("admin", "household"):
-            return CollectionRequestModel.query.get_or_404(collection_request_id)
-        abort(403, message="Admin or household privileges required to access resources")
+        return CollectionRequestModel.query.get_or_404(collection_request_id)
 
     @jwt_required()
     def delete(self, collection_request_id):
@@ -118,8 +119,8 @@ class CollectionRequest(MethodView):
             not exist
         """
         jwt = get_jwt()
-        if jwt.get("role") != "admin":
-            abort(403, message="Admin privileges required to delete a collection request")
+        if jwt.get("role") != "household":
+            abort(403, message="Household privileges required to delete a collection request")
 
         collection_request = CollectionRequestModel.query.get_or_404(
             collection_request_id)

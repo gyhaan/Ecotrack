@@ -58,7 +58,10 @@ class Households(MethodView):
             abort: If there is an error adding the household to the database
 
         """
-        household = HouseholdModel(**household_data)
+        jwt = get_jwt()
+        user_id = jwt.get("sub")
+
+        household = HouseholdModel(**household_data, user_id=user_id)
 
         try:
             db.session.add(household)
@@ -94,7 +97,7 @@ class Household(MethodView):
         jwt = get_jwt()
         user_role = jwt.get("role")
 
-        if user_role in ("admin", "household"):
+        if user_role in ("admin", "collector"):
             return HouseholdModel.query.get_or_404(household_id)
         abort(403, message="Household or admin privileges required to access resources")
 

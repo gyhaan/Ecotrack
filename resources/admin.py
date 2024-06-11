@@ -33,12 +33,15 @@ class Admins(MethodView):
         Returns:
             dict: A dictionary containing all admins in the database
         """
+        jwt = get_jwt()
+
+        if jwt.get("role") != "admin":
+            abort(403, message="Admin privileges required to view all admins")
         return AdminModel.query.all()
 
     @jwt_required()
-    @blp.arguments(AdminSchema)
     @blp.response(201, AdminSchema())
-    def post(self, admin_data):
+    def post(self):
         """
         Add a new admin to the database.
 
@@ -54,7 +57,9 @@ class Admins(MethodView):
             abort: If there is an error adding the admin to the database.
 
         """
-        admin = AdminModel(**admin_data)
+        jwt = get_jwt()
+        user_id = jwt.get("sub")
+        admin = AdminModel(user_id=user_id)
 
         try:
             db.session.add(admin)
@@ -87,6 +92,12 @@ class Admin(MethodView):
             abort: If there is no admin with the specified ID
 
         """
+
+        jwt = get_jwt()
+
+        if jwt.get("role") != "admin":
+            abort(403, message="Admin privileges required to view an admin")
+
         admin = AdminModel.query.get(admin_id)
 
         if not admin:

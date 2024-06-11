@@ -94,7 +94,7 @@ class User(MethodView):
     """
     Class for handling requests to the /users/<user_id> endpoint
     """
-    @jwt_required()
+    # @jwt_required()
     @blp.response(200, UserSchema)
     def get(self, user_id):
         """
@@ -109,11 +109,7 @@ class User(MethodView):
         Raises:
         - 404 Not Found: If no user with the given ID exists.
         """
-        jwt = get_jwt()
-
-        if jwt.get("role") == "admin":
-            return UserModel.query.get_or_404(user_id)
-        abort(403, message="Admin privileges required to carry out this action")
+        return UserModel.query.get_or_404(user_id)
 
 
     @jwt_required()

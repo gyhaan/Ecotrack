@@ -5,7 +5,7 @@ Blueprint for handling collection dates
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt
 
 from db import db
 from models import CollectionDateModel
@@ -34,7 +34,16 @@ class CollectionDates(MethodView):
             dict: A dictionary containing all collection dates
             in the database
         """
-        return CollectionDateModel.query.all()
+        jwt = get_jwt()
+
+        user_role = jwt.get("role")
+
+        if user_role in ("admin", "household"):
+            return CollectionDateModel.query.all()
+        
+        if user_role == "collector":
+            return CollectionDateModel.query.filter_by(
+                collector_id=jwt.get("sub")).all()
 
     @jwt_required()
     @blp.arguments(CollectionDateSchema)
@@ -54,6 +63,11 @@ class CollectionDates(MethodView):
             abort(400, message): If there is an error adding the collection
             date to the database.
         """
+        jwt = get_jwt()
+
+        if jwt.get("role") != "collector":
+            abort(403, message="Collector privileges required to add collection dates")
+
         collection_date = CollectionDateModel(**collection_date_data)
 
         try:
@@ -85,7 +99,11 @@ class CollectionDate(MethodView):
             tuple: A tuple containing the collection date and the HTTP
             status code 200
         """
-        return CollectionDateModel.query.get_or_404(collection_date_id)
+        jwt = get_jwt()
+        if jwt.get("role") in ("collector", "admin"):
+            return CollectionDateModel.query.get_or_404(collection_date_id)
+        
+        abort(403, message="Collector or admin privileges required to view collection dates")
 
     @jwt_required()
     def delete(self, collection_date_id):
@@ -104,6 +122,10 @@ class CollectionDate(MethodView):
             does not exist
 
         """
+        jwt = get_jwt()
+        if jwt.get("role") != "admin":
+            abort(403, message="Admin privileges required to delete collection dates")
+
         collection_date = CollectionDateModel.query.get_or_404(
             collection_date_id)
         db.session.delete(collection_date)
