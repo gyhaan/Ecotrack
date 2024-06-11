@@ -76,8 +76,7 @@ class UserLogin(MethodView):
             username=user_data["username"]
             ).first()
         if user is None or not pbkdf2_sha256.verify(
-            user_data["password"], user.password
-            ):
+            user_data["password"], user.password):
             abort(401, message="Incorrect username or password")
 
         access_token = create_access_token(identity=user.id)
@@ -120,7 +119,6 @@ class User(MethodView):
         - 404 Not Found: If no user with the given ID exists.
         """
         return UserModel.query.get_or_404(user_id)
-
 
     @jwt_required()
     def delete(self, user_id):

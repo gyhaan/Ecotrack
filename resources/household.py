@@ -38,7 +38,6 @@ class Households(MethodView):
             return HouseholdModel.query.all()
         abort(403, message="Admin privileges required to access resources")
 
-
     @jwt_required()
     @blp.arguments(HouseholdSchema)
     @blp.response(201, HouseholdSchema)

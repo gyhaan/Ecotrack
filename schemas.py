@@ -71,6 +71,7 @@ class AdminSchema(PlainAdminSchema):
     """
     user_id = fields.Int(dump_only=True)
 
+
 class CollectionRequestSchema(PlainCollectionRequestSchema):
     """
     This schema represents a collection request with relationships.
