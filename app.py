@@ -10,10 +10,14 @@ from flask_jwt_extended import JWTManager
 
 from db import db
 from resources.user import blp as UserBlp
+from resources.admin import blp as AdminBlp
 from resources.household import blp as HouseholdBlp
 from resources.collector import blp as CollectorBlp
 from resources.collection_dates import blp as CollectionDatesBlp
 from resources.collection_requests import blp as CollectionRequestsBlp
+from models import HouseholdModel
+from models import CollectorModel
+from models import AdminModel
 
 
 def create_app(db_url=None):
@@ -35,6 +39,21 @@ def create_app(db_url=None):
 
     jwt = JWTManager(app)
 
+    @jwt.additional_claims_loader
+    def add_user_role_to_jwt(identity):
+        # check if the user is household
+        if HouseholdModel.query.filter_by(user_id=identity).first():
+            return {"role": "household"}
+        # check if the user is collector
+        elif CollectorModel.query.filter_by(user_id=identity).first():
+            return {"role": "collector"}
+        # check if the user is admin
+        elif AdminModel.query.filter_by(user_id=identity).first():
+            return {"role": "admin"}
+        # if the user is not in any of the tables, return None
+        else:
+            return {"role": None}
+
     api = Api(app)
 
     app.config["JWT_SECRET_KEY"] = "not-so-secret"
@@ -44,6 +63,7 @@ def create_app(db_url=None):
 
     # Register the blueprints
     api.register_blueprint(UserBlp)
+    api.register_blueprint(AdminBlp)
     api.register_blueprint(HouseholdBlp)
     api.register_blueprint(CollectorBlp)
     api.register_blueprint(CollectionDatesBlp)

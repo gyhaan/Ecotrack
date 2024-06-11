@@ -5,10 +5,13 @@ This module contains the User blueprint.
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 
 from db import db
 from models import UserModel
+from models import HouseholdModel
+from models import CollectorModel
+from models import AdminModel
 from schemas import UserSchema
 
 blp = Blueprint(
@@ -73,11 +76,25 @@ class UserLogin(MethodView):
 
         access_token = create_access_token(identity=user.id)
 
-        return {"message": "Logged in successfully", "access_token": access_token}
+        # check the role of the user
+        if HouseholdModel.query.filter_by(user_id=user.id).first():
+            role = "household"
+        elif CollectorModel.query.filter_by(user_id=user.id).first():
+            role = "collector"
+        elif AdminModel.query.filter_by(user_id=user.id).first():
+            role = "admin"
+        else:
+            role = None
+
+        return {"message": "Logged in successfully", "access_token": access_token, "role": role}
 
 
 @blp.route("/users/<user_id>")
 class User(MethodView):
+    """
+    Class for handling requests to the /users/<user_id> endpoint
+    """
+    @jwt_required()
     @blp.response(200, UserSchema)
     def get(self, user_id):
         """
@@ -92,8 +109,14 @@ class User(MethodView):
         Raises:
         - 404 Not Found: If no user with the given ID exists.
         """
-        return UserModel.query.get_or_404(user_id)
+        jwt = get_jwt()
 
+        if jwt.get("role") == "admin":
+            return UserModel.query.get_or_404(user_id)
+        abort(403, message="Admin privileges required to carry out this action")
+
+
+    @jwt_required()
     def delete(self, user_id):
         """
         Delete a user by ID
@@ -105,13 +128,18 @@ class User(MethodView):
         - dict: A dictionary containing the message "User deleted successfully".
 
         Raises:
+        - 403 Forbidden: If the user does not have admin privileges.
         - 404 Not Found: If no user with the given ID exists.
         """
-        user = UserModel.query.get(user_id)
-        if user is None:
-            abort(404, message="User not found")
+        jwt = get_jwt()
 
-        db.session.delete(user)
-        db.session.commit()
+        if jwt.get("role") == "admin":
+            user = UserModel.query.get(user_id)
+            if user is None:
+                abort(404, message="User not found")
 
-        return {"message": "User deleted successfully"}
+            db.session.delete(user)
+            db.session.commit()
+            return {"message": "User deleted successfully"}
+
+        abort(403, message="Admin privileges required to carry out this action")

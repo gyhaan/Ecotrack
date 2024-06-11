@@ -5,6 +5,7 @@ Blueprint for handling collection dates
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required
 
 from db import db
 from models import CollectionDateModel
@@ -23,6 +24,7 @@ class CollectionDates(MethodView):
     """
     Class for handling requests to the /collection_dates endpoint
     """
+    @jwt_required()
     @blp.response(200, CollectionDateSchema(many=True))
     def get(self):
         """
@@ -34,6 +36,7 @@ class CollectionDates(MethodView):
         """
         return CollectionDateModel.query.all()
 
+    @jwt_required()
     @blp.arguments(CollectionDateSchema)
     @blp.response(201, CollectionDateSchema)
     def post(self, collection_date_data):
@@ -69,6 +72,7 @@ class CollectionDate(MethodView):
     Class for handling requests to the /collection_dates/<collection_date_id>
     endpoint
     """
+    @jwt_required()
     @blp.response(200, CollectionDateSchema)
     def get(self, collection_date_id):
         """
@@ -83,6 +87,7 @@ class CollectionDate(MethodView):
         """
         return CollectionDateModel.query.get_or_404(collection_date_id)
 
+    @jwt_required()
     def delete(self, collection_date_id):
         """
         Delete a collection date by ID

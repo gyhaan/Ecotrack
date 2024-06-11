@@ -5,6 +5,7 @@ Blueprint for handling requests to the /collectors endpoint
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required, get_jwt
 
 from db import db
 from models import CollectorModel
@@ -23,6 +24,7 @@ class Collectors(MethodView):
     """
     Class for handling requests to the /collectors endpoint
     """
+    @jwt_required()
     @blp.response(200, CollectorSchema(many=True))
     def get(self):
         """
@@ -31,8 +33,13 @@ class Collectors(MethodView):
         Returns:
             dict: A dictionary containing all collectors in the database
         """
+        jwt = get_jwt()
+
+        if jwt.get("role") != "admin":
+            abort(403, message="Admin privileges required to access resources")
         return CollectorModel.query.all()
 
+    @jwt_required()
     @blp.arguments(CollectorSchema)
     @blp.response(201, CollectorSchema)
     def post(self, collector_data):
@@ -68,6 +75,7 @@ class Collector(MethodView):
     """
     Class for handling requests to the /collectors/<collector_id> endpoint
     """
+    @jwt_required()
     @blp.response(200, CollectorSchema)
     def get(self, collector_id):
         """
@@ -83,8 +91,13 @@ class Collector(MethodView):
         Raises:
             404: If the collector with the given ID is not found
         """
-        return CollectorModel.query.get_or_404(collector_id)
+        jwt = get_jwt()
+        user_role = jwt.get("role")
+        if user_role in ("admin", "collector"):
+            return CollectorModel.query.get_or_404(collector_id)
+        abort(403, message="Admin or collector privileges required to access this resource")
 
+    @jwt_required()
     def delete(self, collector_id):
         """
         Delete a collector by ID
@@ -99,6 +112,11 @@ class Collector(MethodView):
         Raises:
             404: If the collector with the given ID is not found
         """
+        jwt = get_jwt()
+
+        if jwt.get("role") != "admin":
+            abort(403, message="Admin privileges required to delete a collector")
+
         collector = CollectorModel.query.get_or_404(collector_id)
         db.session.delete(collector)
         db.session.commit()

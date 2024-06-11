@@ -62,6 +62,7 @@ class UserSchema(PlainUserSchema):
     """
     household = fields.Nested(PlainHouseholdSchema(), dump_only=True)
     collector = fields.Nested(PlainCollectorSchema(), dump_only=True)
+    admin = fields.Nested(PlainAdminSchema(), dump_only=True)
 
 
 class AdminSchema(PlainAdminSchema):
@@ -69,7 +70,6 @@ class AdminSchema(PlainAdminSchema):
     This schema represents an admin with relationships.
     """
     user_id = fields.Int(required=True)
-    user = fields.Nested(PlainUserSchema(), dump_only=True)
 
 class CollectionRequestSchema(PlainCollectionRequestSchema):
     """
@@ -95,7 +95,6 @@ class HouseholdSchema(PlainHouseholdSchema):
     This schema represents a household with relationships.
     """
     user_id = fields.Int(required=True)
-    user = fields.Nested(PlainUserSchema(), dump_only=True)
     collection_requests = fields.List(fields.Nested(
         PlainCollectionRequestSchema()), dump_only=True)
 
@@ -107,4 +106,3 @@ class CollectorSchema(PlainCollectorSchema):
     user_id = fields.Int(required=True)
     collection_dates = fields.List(fields.Nested(
         PlainCollectionDateSchema()), dump_only=True)
-
