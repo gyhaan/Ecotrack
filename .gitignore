@@ -1,7 +1,8 @@
 # ignore environment files
 .venv/
 .flaskenv
-
+.ecotrack
+ecotrack
 # ignore python cache files
 __pycache__/
 resources/__pycache__/
