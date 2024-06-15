@@ -2,7 +2,7 @@
 This module contains the User model.
 """
 
-from db import db
+from database import db
 
 
 class UserModel(db.Model):

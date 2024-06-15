@@ -2,7 +2,7 @@
 This module contains the Admin model
 """
 
-from db import db
+from database import db
 
 
 class AdminModel(db.Model):

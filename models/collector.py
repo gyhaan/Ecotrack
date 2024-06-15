@@ -2,7 +2,7 @@
 This module contains the model for the collector table in the database.
 """
 
-from db import db
+from database import db
 
 
 class CollectorModel(db.Model):
