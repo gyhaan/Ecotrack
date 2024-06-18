@@ -1,21 +1,20 @@
 import unittest
 import sys
 import os
-
-# Add the project directory to the sys.path to locate the app module
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from flask_jwt_extended import create_access_token
 from app import create_app  
 from db import db
 from models import HouseholdModel, AdminModel
 
+# Add the project directory to the sys.path to locate the app module
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 class HouseholdTestCase(unittest.TestCase):
     def setUp(self):
         """Set up test variables and initialize the app."""
         # Create a Flask application configured for testing
-        self.app = create_app("sqlite:///:memory:")  # Use in-memory database for testing
-        self.client = self.app.test_client()  # Create a test client
+        self.app = create_app("sqlite:///:memory:")
+        self.client = self.app.test_client()
 
         # Set up the application context for database operations
         with self.app.app_context():
@@ -27,7 +26,8 @@ class HouseholdTestCase(unittest.TestCase):
             db.session.commit()  # Commit the session to save the admin
 
             # Generate access tokens with roles for authorization testing
-            self.admin_token = create_access_token(identity=1, additional_claims={"role": "admin"})
+            self.admin_token = create_access_token(
+                identity=1, additional_claims={"role": "admin"})
 
     def tearDown(self):
         """Clean up resources after each test."""
@@ -40,23 +40,23 @@ class HouseholdTestCase(unittest.TestCase):
         # Send a GET request to retrieve all households
         response = self.client.get(
             "/households",
-            headers={"Authorization": f"Bearer {self.admin_token}"}  # Use admin token for authorization
+            headers={"Authorization": f"Bearer {self.admin_token}"}
         )
-        self.assertEqual(response.status_code, 200)  # Check that the status code is 200 (OK)
-        self.assertEqual(len(response.json), 0)  # Verify that no households are returned initially
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 0)
 
     def test_add_household(self):
         """Test adding a new household."""
-        household_data = {"house_number": "123", "area": "Main Street"}  # Data for the new household
+        household_data = {"house_number": "123", "area": "Main Street"} 
         # Send a POST request to add a new household
         response = self.client.post(
             "/households",
             json=household_data,
-            headers={"Authorization": f"Bearer {self.admin_token}"}  # Use admin token for authorization
+            headers={"Authorization": f"Bearer {self.admin_token}"}
         )
-        self.assertEqual(response.status_code, 201)  # Check that the status code is 201 (Created)
-        self.assertIn("house_number", response.json)  # Verify that 'house_number' is in the response JSON
-        self.assertEqual(response.json["house_number"], "123")  # Verify that the house number is correct
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("house_number", response.json)
+        self.assertEqual(response.json["house_number"], "123")
 
     def test_get_household_by_id(self):
         """Test retrieving a household by ID."""
@@ -72,9 +72,12 @@ class HouseholdTestCase(unittest.TestCase):
             f"/households/{household_id}",
             headers={"Authorization": f"Bearer {self.admin_token}"}  # Use admin token for authorization
         )
-        self.assertEqual(response.status_code, 200)  # Check that the status code is 200 (OK)
-        self.assertIn("house_number", response.json)  # Verify that 'house_number' is in the response JSON
-        self.assertEqual(response.json["house_number"], '124')  # Verify that the house number is correct
+        # Check that the status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+        # Verify that 'house_number' is in the response JSON 
+        self.assertIn("house_number", response.json)
+        # Verify that the house number is correct
+        self.assertEqual(response.json["house_number"], '124')  
 
     def test_delete_household(self):
         """Test deleting a household by ID."""
@@ -88,10 +91,13 @@ class HouseholdTestCase(unittest.TestCase):
         # Send a DELETE request to delete the household by ID
         response = self.client.delete(
             f"/households/{household_id}",
-            headers={"Authorization": f"Bearer {self.admin_token}"}  # Use admin token for authorization
+            # Use admin token for authorization
+            headers={"Authorization": f"Bearer {self.admin_token}"}  
         )
-        self.assertEqual(response.status_code, 200)  # Check that the status code is 200 (OK)
-        self.assertEqual(response.json, {"message": "Household deleted"})  # Verify the deletion message
+        # Check that the status code is 200 (OK)
+        self.assertEqual(response.status_code, 200) 
+        # Verify the deletion message 
+        self.assertEqual(response.json, {"message": "Household deleted"})  
 
         # Verify household is removed from the database
         with self.app.app_context():
@@ -109,7 +115,8 @@ class HouseholdTestCase(unittest.TestCase):
 
         # Test unauthorized deletion (no token provided)
         response = self.client.delete(f"/households/{household_id}")
-        self.assertEqual(response.status_code, 401)  # Check that the status code is 401 (Unauthorized)
+        # Check that the status code is 401 (Unauthorized)
+        self.assertEqual(response.status_code, 401)  
 
 
 if __name__ == "__main__":

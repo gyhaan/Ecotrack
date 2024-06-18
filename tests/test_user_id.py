@@ -2,12 +2,11 @@ import unittest
 import os
 import sys
 from flask_jwt_extended import create_access_token
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from app import create_app
 from db import db
 from models import UserModel, AdminModel
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 
 class TestUserEndpoint(unittest.TestCase):
 
@@ -41,11 +40,6 @@ class TestUserEndpoint(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["username"], "testuser")
 
-    #def test_get_user_invalid_id(self):
-        # Test retrieving a user by an invalid user ID
-        #response = self.client.get("/users/999")
-        #self.assertEqual(response.status_code, 404)
-        #self.assertEqual(response.json["message"], "User not found")
 
     def test_delete_user_admin(self):
         # Test deleting a user with an admin role

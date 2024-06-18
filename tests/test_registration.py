@@ -1,12 +1,11 @@
 import sys
 import os
 import unittest
-
+from app import create_app, db 
 # Add the project root directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import create_app, db  
-
+ 
 class UserTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()

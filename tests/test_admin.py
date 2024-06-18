@@ -1,15 +1,14 @@
 import sys
 import os
 import unittest
-from unittest.mock import patch, MagicMock
 from flask_jwt_extended import create_access_token
-
-# Add the directory containing app.py to the system path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from app import create_app
 from db import db
 from models.admin import AdminModel
+
+
+# Add the directory containing app.py to the system path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 class AdminTestCase(unittest.TestCase):
     def setUp(self):
@@ -26,8 +25,10 @@ class AdminTestCase(unittest.TestCase):
             db.session.commit()
 
             # Generate access tokens
-            self.admin_token = create_access_token(identity=1, additional_claims={"role": "admin"})
-            self.new_admin_token = create_access_token(identity=2, additional_claims={"role": "admin"})
+            self.admin_token = create_access_token(
+                identity=1, additional_claims={"role": "admin"})
+            self.new_admin_token = create_access_token(
+                identity=2, additional_claims={"role": "admin"})
 
     def tearDown(self):
         """Clean up resources after each test."""

@@ -3,12 +3,11 @@ import os
 import unittest
 from unittest.mock import patch
 from passlib.hash import pbkdf2_sha256
-
+from app import create_app, db
+from models import UserModel
 # Add the project root directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import create_app, db
-from models import UserModel
 
 class UserLoginTestCase(unittest.TestCase):
     def setUp(self):
@@ -16,7 +15,8 @@ class UserLoginTestCase(unittest.TestCase):
         self.app.config['TESTING'] = True
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         self.client = self.app.test_client()
-        self.app.app_context().push()  # Push application context once for setup
+        # Push application context once for setup
+        self.app.app_context().push()  
         db.create_all()
 
     def tearDown(self):
