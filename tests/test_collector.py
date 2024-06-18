@@ -46,8 +46,7 @@ class CollectorTestCase(unittest.TestCase):
             headers={"Authorization": f"Bearer {self.admin_token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 1)
-    
-    
+
     def test_add_collector(self):
         """Test adding a new collector."""
         collector_data = {"allocated_area": "New Area"}

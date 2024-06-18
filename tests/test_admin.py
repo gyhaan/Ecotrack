@@ -15,7 +15,7 @@ class AdminTestCase(unittest.TestCase):
     def setUp(self):
         """Set up test variables and initialize the app."""
         # Use in-memory database for testing
-        self.app = create_app("sqlite:///:memory:")  
+        self.app = create_app("sqlite:///:memory:")
         self.client = self.app.test_client()
 
         with self.app.app_context():

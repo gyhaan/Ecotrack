@@ -101,7 +101,7 @@ class HouseholdTestCase(unittest.TestCase):
         )
         # Check that the status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
-        # Verify the deletion message 
+        # Verify the deletion message
         self.assertEqual(response.json, {"message": "Household deleted"})
 
         # Verify household is removed from the database
