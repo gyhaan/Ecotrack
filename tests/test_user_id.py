@@ -59,7 +59,7 @@ class TestUserEndpoint(unittest.TestCase):
             f"/users/{self.test_user.id}", headers=headers)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(
-            response.json["message"], 
+            response.json["message"],
             "Admin privileges required to carry out this action")
 
 
