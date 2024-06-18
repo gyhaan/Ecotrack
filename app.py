@@ -8,7 +8,7 @@ from flask import Flask
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 
-from database import db
+from db import db
 from resources.user import blp as UserBlp
 from resources.admin import blp as AdminBlp
 from resources.household import blp as HouseholdBlp

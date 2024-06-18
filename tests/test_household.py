@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from flask_jwt_extended import create_access_token
 from app import create_app  # Ensure this matches the actual application module
-from database import db
+from db import db
 from models import HouseholdModel, AdminModel
 
 class HouseholdTestCase(unittest.TestCase):

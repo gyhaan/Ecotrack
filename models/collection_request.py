@@ -3,7 +3,7 @@ This module contains the model for the collection_request table
 in the database.
 """
 
-from database import db
+from db import db
 
 
 class CollectionRequestModel(db.Model):

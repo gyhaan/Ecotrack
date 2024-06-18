@@ -7,7 +7,7 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 from flask_jwt_extended import jwt_required, get_jwt
 
-from database import db
+from db import db
 from models import CollectionDateModel
 from schemas import CollectionDateSchema
 

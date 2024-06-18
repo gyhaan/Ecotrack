@@ -2,7 +2,7 @@
 This module contains the model for the household table in the database.
 """
 
-from database import db
+from db import db
 
 
 class HouseholdModel(db.Model):

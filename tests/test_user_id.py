@@ -6,7 +6,7 @@ from flask_jwt_extended import create_access_token
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app
-from database import db
+from db import db
 from models import UserModel, AdminModel
 
 class TestUserEndpoint(unittest.TestCase):
