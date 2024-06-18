@@ -16,7 +16,7 @@ class UserLoginTestCase(unittest.TestCase):
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         self.client = self.app.test_client()
         # Push application context once for setup
-        self.app.app_context().push()  
+        self.app.app_context().push()
         db.create_all()
 
     def tearDown(self):
@@ -63,7 +63,8 @@ class UserLoginTestCase(unittest.TestCase):
         response_json = response.get_json()
 
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response_json['message'], 'Incorrect username or password')
+        self.assertEqual(
+            response_json['message'], 'Incorrect username or password')
 
     @patch('models.UserModel.query')
     def test_user_login_nonexistent_user(self, mock_query):
@@ -78,7 +79,9 @@ class UserLoginTestCase(unittest.TestCase):
         response_json = response.get_json()
 
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response_json['message'], 'Incorrect username or password')
+        self.assertEqual(
+            response_json['message'], 'Incorrect username or password')
+
 
 if __name__ == '__main__':
     unittest.main()

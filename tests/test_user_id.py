@@ -18,8 +18,10 @@ class TestUserEndpoint(unittest.TestCase):
         db.create_all()
 
         # Create a test user and an admin user
-        self.test_user = UserModel(username="testuser", password="testpassword")
-        self.admin_user = UserModel(username="adminuser", password="adminpassword")
+        self.test_user = UserModel(
+            username="testuser", password="testpassword")
+        self.admin_user = UserModel(
+            username="adminuser", password="adminpassword")
         db.session.add(self.test_user)
         db.session.add(self.admin_user)
         db.session.commit()
@@ -40,12 +42,12 @@ class TestUserEndpoint(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["username"], "testuser")
 
-
     def test_delete_user_admin(self):
         # Test deleting a user with an admin role
         access_token = create_access_token(identity=self.admin_user.id)
         headers = {"Authorization": f"Bearer {access_token}"}
-        response = self.client.delete(f"/users/{self.test_user.id}", headers=headers)
+        response = self.client.delete(
+            f"/users/{self.test_user.id}", headers=headers)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["message"], "User deleted successfully")
 
@@ -53,9 +55,12 @@ class TestUserEndpoint(unittest.TestCase):
         # Test deleting a user with a non-admin role
         access_token = create_access_token(identity=self.test_user.id)
         headers = {"Authorization": f"Bearer {access_token}"}
-        response = self.client.delete(f"/users/{self.test_user.id}", headers=headers)
+        response = self.client.delete(
+            f"/users/{self.test_user.id}", headers=headers)
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.json["message"], "Admin privileges required to carry out this action")
+        self.assertEqual(
+            response.json["message"], "Admin privileges required to carry out this action")
+
 
 if __name__ == "__main__":
     unittest.main()

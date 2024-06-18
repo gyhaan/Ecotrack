@@ -2,12 +2,14 @@ import unittest
 import sys
 import os
 from flask_jwt_extended import create_access_token
-from app import create_app  
+from app import create_app
 from db import db
 from models import HouseholdModel, AdminModel
 
 # Add the project directory to the sys.path to locate the app module
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..')))
+
 
 class HouseholdTestCase(unittest.TestCase):
     def setUp(self):
@@ -47,7 +49,7 @@ class HouseholdTestCase(unittest.TestCase):
 
     def test_add_household(self):
         """Test adding a new household."""
-        household_data = {"house_number": "123", "area": "Main Street"} 
+        household_data = {"house_number": "123", "area": "Main Street"}
         # Send a POST request to add a new household
         response = self.client.post(
             "/households",
@@ -61,7 +63,8 @@ class HouseholdTestCase(unittest.TestCase):
     def test_get_household_by_id(self):
         """Test retrieving a household by ID."""
         # First, add a household
-        new_household = HouseholdModel(house_number='124', area='First Street', user_id=1)
+        new_household = HouseholdModel(
+            house_number='124', area='First Street', user_id=1)
         with self.app.app_context():
             db.session.add(new_household)
             db.session.commit()
@@ -70,19 +73,21 @@ class HouseholdTestCase(unittest.TestCase):
         # Send a GET request to retrieve the household by ID
         response = self.client.get(
             f"/households/{household_id}",
-            headers={"Authorization": f"Bearer {self.admin_token}"}  # Use admin token for authorization
+            # Use admin token for authorization
+            headers={"Authorization": f"Bearer {self.admin_token}"}
         )
         # Check that the status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
-        # Verify that 'house_number' is in the response JSON 
+        # Verify that 'house_number' is in the response JSON
         self.assertIn("house_number", response.json)
         # Verify that the house number is correct
-        self.assertEqual(response.json["house_number"], '124')  
+        self.assertEqual(response.json["house_number"], '124')
 
     def test_delete_household(self):
         """Test deleting a household by ID."""
         # First, add a household to delete
-        new_household = HouseholdModel(house_number='125', area='Second Street', user_id=1)
+        new_household = HouseholdModel(
+            house_number='125', area='Second Street', user_id=1)
         with self.app.app_context():
             db.session.add(new_household)
             db.session.commit()
@@ -92,12 +97,12 @@ class HouseholdTestCase(unittest.TestCase):
         response = self.client.delete(
             f"/households/{household_id}",
             # Use admin token for authorization
-            headers={"Authorization": f"Bearer {self.admin_token}"}  
+            headers={"Authorization": f"Bearer {self.admin_token}"}
         )
         # Check that the status code is 200 (OK)
-        self.assertEqual(response.status_code, 200) 
+        self.assertEqual(response.status_code, 200)
         # Verify the deletion message 
-        self.assertEqual(response.json, {"message": "Household deleted"})  
+        self.assertEqual(response.json, {"message": "Household deleted"})
 
         # Verify household is removed from the database
         with self.app.app_context():
@@ -107,7 +112,8 @@ class HouseholdTestCase(unittest.TestCase):
     def test_delete_household_unauthorized(self):
         """Test unauthorized deletion of a household by ID."""
         # Add a household to delete
-        new_household = HouseholdModel(house_number='126', area='Third Street', user_id=1)
+        new_household = HouseholdModel(
+            house_number='126', area='Third Street', user_id=1)
         with self.app.app_context():
             db.session.add(new_household)
             db.session.commit()
@@ -116,7 +122,7 @@ class HouseholdTestCase(unittest.TestCase):
         # Test unauthorized deletion (no token provided)
         response = self.client.delete(f"/households/{household_id}")
         # Check that the status code is 401 (Unauthorized)
-        self.assertEqual(response.status_code, 401)  
+        self.assertEqual(response.status_code, 401)
 
 
 if __name__ == "__main__":

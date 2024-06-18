@@ -1,11 +1,11 @@
 import sys
 import os
 import unittest
-from app import create_app, db 
+from app import create_app, db
 # Add the project root directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
- 
+
 class UserTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
@@ -26,7 +26,9 @@ class UserTestCase(unittest.TestCase):
             'password': 'password'
         })
         self.assertEqual(response.status_code, 201)
-        self.assertIn('User created successfully', response.get_json().values())
+        self.assertIn(
+            'User created successfully', response.get_json().values())
+
 
 if __name__ == '__main__':
     unittest.main()

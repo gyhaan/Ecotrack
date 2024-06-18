@@ -10,10 +10,12 @@ from models.admin import AdminModel
 # Add the directory containing app.py to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+
 class AdminTestCase(unittest.TestCase):
     def setUp(self):
         """Set up test variables and initialize the app."""
-        self.app = create_app("sqlite:///:memory:")  # Use in-memory database for testing
+        # Use in-memory database for testing
+        self.app = create_app("sqlite:///:memory:")  
         self.client = self.app.test_client()
 
         with self.app.app_context():
