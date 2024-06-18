@@ -7,6 +7,7 @@ import os
 from flask import Flask
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 
 from db import db
 from resources.user import blp as UserBlp
@@ -36,6 +37,7 @@ def create_app(db_url=None):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url or database_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
+    migrate = Migrate(app, db)
 
     jwt = JWTManager(app)
 
@@ -57,9 +59,6 @@ def create_app(db_url=None):
     api = Api(app)
 
     app.config["JWT_SECRET_KEY"] = "not-so-secret"
-
-    with app.app_context():
-        db.create_all()
 
     # Register the blueprints
     api.register_blueprint(UserBlp)

@@ -1,11 +1,13 @@
 # ignore environment files
 .venv/
 .flaskenv
-.ecotrack
-ecotrack
+ecotrack_env
+
 # ignore python cache files
 __pycache__/
 resources/__pycache__/
+migrations/__pycache__/
+migrations/versions/__pycache__/
 
 # ignore the sqlite database
 instance/
