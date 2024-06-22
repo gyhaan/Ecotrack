@@ -37,7 +37,7 @@ def create_app(db_url=None):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url or database_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db)  # noqa
 
     jwt = JWTManager(app)
 
