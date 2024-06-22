@@ -2,6 +2,10 @@
 
 This document describes the API for the waste management application backend written in Flask.
 
+[Link to hosted API](https://ecotrack-api.onrender.com)
+
+[Link to API doucmentation](https://ecotrack-api.onrender.com/swagger-ui/api/docs)
+
 ### User Operations
 
 *Register a new user:*
